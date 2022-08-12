@@ -8,6 +8,9 @@ namespace KonsultProfil.Api.Models
        : base(options)
         {
         }
+
         public DbSet<ConsultProfile> ConsultProfiles { get; set; } = null!;
+        public DbSet<Skill> Skills { get; set; } = null!;
+        public DbSet<Role> Roles { get; set; } = null!;
     }
 }

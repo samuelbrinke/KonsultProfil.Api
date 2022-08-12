@@ -34,7 +34,7 @@ namespace KonsultProfil.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ConsultProfile>> GetConsultProfile(int id)
+        public async Task<ActionResult<ConsultProfileDTO>> GetConsultProfile(int id)
         {
             var profile = await _dbContext.ConsultProfiles.FirstOrDefaultAsync(i => i.Id == id);
 
@@ -43,13 +43,13 @@ namespace KonsultProfil.Api.Controllers
                 return NotFound();
             }
 
-            return profile;
+            return ProfileToDTO(profile);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllConsultProfile()
         {
-            var profiles = await _dbContext.ConsultProfiles.ToListAsync();
+            var profiles = await _dbContext.ConsultProfiles.Select(i => ProfileToDTO(i)).ToListAsync();
 
             return Ok(profiles);
         }
@@ -71,6 +71,19 @@ namespace KonsultProfil.Api.Controllers
             return Ok();
         }
 
+        private ConsultProfileDTO ProfileToDTO(ConsultProfile consultProfile)
+        {
+            return new ConsultProfileDTO
+            {
+                Id = consultProfile.Id,
+                FirstName = consultProfile.FirstName,
+                lastName = consultProfile.LastName,
+                Description = consultProfile.Description,
+                Skills = consultProfile.Skills,
+                Roles = consultProfile.Roles
+            };
+        } 
+
         private void Seed()
         {
             if(_dbContext.ConsultProfiles.Any())
@@ -83,7 +96,23 @@ namespace KonsultProfil.Api.Controllers
                     Id = 1,
                     FirstName = "William",
                     LastName = "Shakespeare",
-                    Description = "Junior dev"
+                    Description = "Junior dev",
+                    Skills = new List<Skill> {
+                        new Skill { 
+                            Name = "C#",
+                            Description = "Microsoft programming language",
+                            Level = 10,
+                            YearsOfExperience = 20,
+                        }
+                    },
+                     Roles = new List<Role> {
+                        new Role { 
+                            Name = "Software Developer",
+                            Description = "Creating cool softwares",
+                            Level = 6,
+                            YearsOfExperience = 15,
+                        }
+                    }
                 },
                 new ConsultProfile
                 {
