@@ -4,7 +4,15 @@
     {
         /* 
         Skills (Språk, verktyg)
-        Tidigare uppdrag
+        Tidigare uppdrag (assignment)
+            startdatum
+            slutdatum
+            uppdragsgivare
+            feedback från uppdragsgivaren
+            uppdragsbeskrivning
+            uppdragstyp (systemutveckling osv)
+            skills
+            roller
         Roller
         */
 
@@ -12,6 +20,21 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Description { get; set; }
+        public ICollection<Skill>? Skills { get; set; }
+        public ICollection<Role>? Roles { get; set; }
+        public ICollection<Assignment>? Assignments { get; set; }
+    }
+
+    public class Assignment
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Employer { get; set; }
+        public string EmployerFeedback { get; set; }
+        public string Description { get; set; }
+        public string TypeOfAssignment { get; set; }
         public ICollection<Skill>? Skills { get; set; }
         public ICollection<Role>? Roles { get; set; }
     }

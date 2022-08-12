@@ -10,6 +10,7 @@ namespace KonsultProfil.Api.Models
         }
 
         public DbSet<ConsultProfile> ConsultProfiles { get; set; } = null!;
+        public DbSet<Assignment> Assignments { get; set; } = null!;
         public DbSet<Skill> Skills { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
     }

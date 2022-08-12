@@ -16,14 +16,17 @@ namespace KonsultProfil.Api.Controllers
             Seed();
         }
 
-        [HttpPost]
+        [HttpPost] 
         public async Task<IActionResult> CreateConsultProfile(ConsultProfileDTO consultProfileDTO)
         {
             var profile = new ConsultProfile
             {
                 FirstName = consultProfileDTO.FirstName,
                 LastName = consultProfileDTO.lastName,
-                Description = consultProfileDTO.Description
+                Description = consultProfileDTO.Description,
+                Assignments = consultProfileDTO.Assignments,
+                Skills = consultProfileDTO.Skills,
+                Roles = consultProfileDTO.Roles,
             };
 
             _dbContext.Add(profile);
@@ -79,6 +82,7 @@ namespace KonsultProfil.Api.Controllers
                 FirstName = consultProfile.FirstName,
                 lastName = consultProfile.LastName,
                 Description = consultProfile.Description,
+                Assignments = consultProfile.Assignments,
                 Skills = consultProfile.Skills,
                 Roles = consultProfile.Roles
             };
