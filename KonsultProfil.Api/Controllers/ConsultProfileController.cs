@@ -1,4 +1,5 @@
-﻿using KonsultProfil.Api.Models;
+﻿using KonsultProfil.Api.Interfaces;
+using KonsultProfil.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,12 @@ namespace KonsultProfil.Api.Controllers
     public class ConsultProfileController : ControllerBase
     {
         private ApplicationDbContext _dbContext;
-        public ConsultProfileController(ApplicationDbContext dbContext)
+        private IConsultProfileRepository _consultProfileRepository;
+
+        public ConsultProfileController(ApplicationDbContext dbContext, IConsultProfileRepository consultProfileRepository)
         {
             _dbContext = dbContext;
+            _consultProfileRepository = consultProfileRepository;
             Seed();
         }
 
@@ -22,7 +26,7 @@ namespace KonsultProfil.Api.Controllers
             var profile = new ConsultProfile
             {
                 FirstName = consultProfileDTO.FirstName,
-                LastName = consultProfileDTO.lastName,
+                LastName = consultProfileDTO.LastName,
                 Description = consultProfileDTO.Description,
                 Assignments = consultProfileDTO.Assignments,
                 Skills = consultProfileDTO.Skills,
@@ -33,45 +37,43 @@ namespace KonsultProfil.Api.Controllers
 
             await _dbContext.SaveChangesAsync();
 
-            return Ok($"Added profile {profile.Id}");
+            return Ok($"Added profile {ProfileToDTO(profile).Id}");
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ConsultProfileDTO>> GetConsultProfile(int id)
         {
-            var profile = await _dbContext.ConsultProfiles.FirstOrDefaultAsync(i => i.Id == id);
+            var profile = await _consultProfileRepository.GetConsultProfileById(id);
 
             if (profile == null)
             {
                 return NotFound();
             }
 
-            return ProfileToDTO(profile);
+            return Ok(ProfileToDTO(profile));
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllConsultProfile()
         {
-            var profiles = await _dbContext.ConsultProfiles.Select(i => ProfileToDTO(i)).ToListAsync();
+            var profiles = await _consultProfileRepository.GetAllConsultProfiles();
 
-            return Ok(profiles);
+            var mapProfilesToDTO = profiles.Select(i => ProfileToDTO(i));
+
+            return Ok(mapProfilesToDTO);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveConsultProfile(int id)
         {
-            var profile = await _dbContext.ConsultProfiles.FirstOrDefaultAsync(i => i.Id == id);
+            var profile = await _consultProfileRepository.RemoveConsultProfile(id);
 
             if (profile == null)
             {
                 return NotFound();
             }
 
-            _dbContext.ConsultProfiles.Remove(profile);
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
+            return Ok($"Removed {ProfileToDTO(profile).FirstName}");
         }
 
         private ConsultProfileDTO ProfileToDTO(ConsultProfile consultProfile)
@@ -80,7 +82,7 @@ namespace KonsultProfil.Api.Controllers
             {
                 Id = consultProfile.Id,
                 FirstName = consultProfile.FirstName,
-                lastName = consultProfile.LastName,
+                LastName = consultProfile.LastName,
                 Description = consultProfile.Description,
                 Assignments = consultProfile.Assignments,
                 Skills = consultProfile.Skills,

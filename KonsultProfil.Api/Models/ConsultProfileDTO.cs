@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
-        public string lastName { get; set; }
+        public string LastName { get; set; }
         public string Description { get; set; }
         public ICollection<Skill>? Skills { get; set; }
         public ICollection<Role>? Roles { get; set; }
